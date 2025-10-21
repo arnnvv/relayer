@@ -36,20 +36,16 @@ bot.onText(/\/balance/, async (msg) => {
 
   try {
     bot.sendMessage(chatId, "Fetching your balance, please wait...");
-
     const response = await fetch(
       `${backendApiUrl}/api/balance/${telegramUserId}`,
     );
-
     if (!response.ok) {
       throw new Error(
         `Backend service responded with status: ${response.status}`,
       );
     }
-
     const data = await response.json();
     const balance = data.balance;
-
     bot.sendMessage(chatId, `Your current balance is: ${balance} tokens.`);
   } catch (error) {
     console.error("Failed to fetch balance:", error);
@@ -57,6 +53,19 @@ bot.onText(/\/balance/, async (msg) => {
       chatId,
       "Sorry, I was unable to fetch your balance at this time. Please try again later.",
     );
+  }
+});
+
+bot.on("message", (msg) => {
+  const chatId = msg.chat.id;
+  const text = msg.text;
+
+  if (text && text.startsWith("/")) {
+    return;
+  }
+
+  if (text) {
+    bot.sendMessage(chatId, `You said: "${text}"`);
   }
 });
 
